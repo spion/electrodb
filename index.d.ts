@@ -3604,13 +3604,15 @@ type PartialDefinedKeys<T> = {
     : P]?: T[P] | undefined;
 };
 
+type MaybeOptional<Required extends true | false | undefined, T> = Required extends true ? T : T | undefined
+
 export type ItemAttribute<A extends Attribute> =
   A["type"] extends OpaquePrimitiveTypeName<infer T>
     ? T
     : A["type"] extends CustomAttributeTypeName<infer T>
     ? T
     : A["type"] extends infer R
-    ? R extends "string"
+    ? MaybeOptional<A["required"], R extends "string"
       ? string
       : R extends "number"
       ? number
@@ -3650,7 +3652,7 @@ export type ItemAttribute<A extends Attribute> =
         : never
       : R extends "any"
       ? any
-      : never
+      : never>
     : never;
 
 export type ReturnedAttribute<A extends Attribute> =
